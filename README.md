@@ -6,6 +6,20 @@ Rough Draft of a run tracker for nostr enthusiasts
 - I want a nostr run club app that allows me to track my runs and save them to my nsecs history, I want the app to show my wavlake playlists, and I want to one click post my run to nostr after i'm done.
 - My lightning node has gone down recently, so i've started using more e-cash stuff in the meantime.....I need a android e-cash wallet that supports NIP60/61 and sign in with amber....because I dont think one exists.....and I would like for one to exist.
 
+## Features
+
+- Track your runs with distance and time
+- Share achievements on Nostr
+- Join running clubs and connect with other runners
+- Integrated Nostr wallet for zaps
+- Music integration with Wavlake
+
+## Development
+- bash
+- npm install
+- npm run dev
+- npm run build
+
 **Roadmap**
 Level 1 (Basic Features)
 - Start Run/Pause Run/Stop Run 
