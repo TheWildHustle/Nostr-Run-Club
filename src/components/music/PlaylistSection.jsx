@@ -9,31 +9,29 @@ export function PlaylistSection({ title, playlists }) {
   }
 
   return (
-    <div className="mb-12">
-      <h2 className="text-2xl font-semibold mb-6">{title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="mb-6">
+      <div className="flex gap-4 overflow-x-auto pb-2">
         {playlists.map((playlist) => (
           <div
             key={playlist.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition hover:scale-105"
+            className="flex flex-col items-center cursor-pointer min-w-[100px]"
             onClick={() => navigate(`/music/playlist/${playlist.id}`)}
           >
-            <div className="aspect-square relative">
-              <div className="grid grid-cols-2 h-full">
+            <div className="relative w-[100px] h-[100px] mb-2">
+              <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 bg-gray-800 rounded-lg overflow-hidden">
                 {playlist.tracks.slice(0, 4).map((track) => (
-                  <img
-                    key={track.id}
-                    src={track.artworkUrl || track.albumArtUrl}
-                    alt={track.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <div key={track.id} className="relative w-full h-full">
+                    <img
+                      src={track.artworkUrl || track.albumArtUrl}
+                      alt={track.title}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity"
+                      loading="lazy"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
-            <div className="p-4">
-              <h3 className="font-semibold text-lg mb-1">{playlist.title}</h3>
-              <p className="text-gray-600">{playlist.tracks.length} tracks</p>
-            </div>
+            <span className="text-sm font-medium text-white text-center">{title}</span>
           </div>
         ))}
       </div>

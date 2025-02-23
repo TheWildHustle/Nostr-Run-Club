@@ -8,6 +8,7 @@ import 'react-h5-audio-player/lib/styles.css';
 export function PlaylistView({ playlist }) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const currentTrack = playlist.tracks[currentTrackIndex];
+  const upcomingTracks = playlist.tracks.slice(currentTrackIndex + 1);
 
   const { data: lnurl } = useQuery({
     queryKey: ['lnurl', currentTrack.id],
@@ -26,41 +27,30 @@ export function PlaylistView({ playlist }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Playlist Info */}
-        <div className="md:w-1/3">
-          <div className="aspect-square relative mb-4">
-            <div className="grid grid-cols-2 h-full">
-              {playlist.tracks.slice(0, 4).map((track) => (
-                <img
-                  key={track.id}
-                  src={track.artworkUrl || track.albumArtUrl}
-                  alt={track.title}
-                  className="w-full h-full object-cover"
-                />
-              ))}
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold mb-2">{playlist.title}</h1>
-          <p className="text-gray-600 mb-4">{playlist.tracks.length} tracks</p>
-        </div>
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <div className="text-center py-4 border-b border-gray-800">
+        <h1 className="text-2xl font-bold">NOSTR RUN CLUB</h1>
+      </div>
 
-        {/* Track List */}
-        <div className="md:w-2/3">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Now Playing</h2>
-            <div className="flex items-center gap-4 mb-4">
+      <div className="flex">
+        {/* Main Content */}
+        <div className="flex-1 p-8">
+          <div className="max-w-2xl mx-auto text-center">
+            {/* Current Track Image */}
+            <div className="relative w-full max-w-lg mx-auto aspect-square mb-6">
               <img
                 src={currentTrack.artworkUrl || currentTrack.albumArtUrl}
                 alt={currentTrack.title}
-                className="w-16 h-16 object-cover rounded"
+                className="w-full h-full object-cover"
               />
-              <div>
-                <h3 className="font-semibold">{currentTrack.title}</h3>
-                <p className="text-gray-600">{currentTrack.artist}</p>
-              </div>
             </div>
+
+            {/* Track Info */}
+            <h2 className="text-2xl font-bold mb-2">{currentTrack.title}</h2>
+            <p className="text-gray-400 mb-6">{currentTrack.artist}</p>
+
+            {/* Audio Controls */}
             <AudioPlayer
               autoPlay
               src={currentTrack.mediaUrl}
@@ -68,43 +58,54 @@ export function PlaylistView({ playlist }) {
               onClickPrevious={playPrevious}
               onEnded={playNext}
               showSkipControls
-              className="rounded-lg"
+              className="bg-transparent"
+              customProgressBarSection={[
+                "CURRENT_TIME",
+                "PROGRESS_BAR",
+                "DURATION",
+              ]}
+              customControlsSection={[
+                "ADDITIONAL_CONTROLS",
+                "MAIN_CONTROLS",
+                "VOLUME_CONTROLS",
+              ]}
             />
+
+            {/* Lightning Button */}
             {lnurl && (
-              <div className="mt-4 text-center">
+              <div className="mt-4">
                 <a
                   href={`lightning:${lnurl}`}
-                  className="inline-block bg-yellow-500 text-black px-4 py-2 rounded-full hover:bg-yellow-400 transition"
+                  className="inline-block bg-yellow-500 text-black px-6 py-2 rounded-full hover:bg-yellow-400 transition"
                 >
                   ⚡️ Support Artist
                 </a>
               </div>
             )}
           </div>
+        </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Tracks</h2>
-            <div className="space-y-2">
-              {playlist.tracks.map((track, index) => (
-                <div
-                  key={track.id}
-                  className={`flex items-center gap-4 p-2 rounded cursor-pointer hover:bg-gray-50 ${
-                    index === currentTrackIndex ? 'bg-gray-100' : ''
-                  }`}
-                  onClick={() => setCurrentTrackIndex(index)}
-                >
-                  <img
-                    src={track.artworkUrl || track.albumArtUrl}
-                    alt={track.title}
-                    className="w-12 h-12 object-cover rounded"
-                  />
-                  <div>
-                    <h3 className="font-semibold">{track.title}</h3>
-                    <p className="text-gray-600">{track.artist}</p>
-                  </div>
+        {/* Up Next Sidebar */}
+        <div className="w-80 border-l border-gray-800 p-4">
+          <h3 className="text-lg font-bold mb-4">Up Next</h3>
+          <div className="space-y-4">
+            {upcomingTracks.map((track, index) => (
+              <div
+                key={track.id}
+                className="flex items-center gap-3 cursor-pointer hover:bg-gray-900 p-2 rounded"
+                onClick={() => setCurrentTrackIndex(currentTrackIndex + index + 1)}
+              >
+                <img
+                  src={track.artworkUrl || track.albumArtUrl}
+                  alt={track.title}
+                  className="w-12 h-12 object-cover"
+                />
+                <div>
+                  <p className="font-medium truncate">{track.title}</p>
+                  <p className="text-sm text-gray-400 truncate">{track.artist}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

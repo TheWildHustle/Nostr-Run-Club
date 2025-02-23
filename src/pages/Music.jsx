@@ -27,14 +27,32 @@ export function Music() {
     staleTime: Infinity,
   });
 
-  const featuredPlaylists = [featuredPlaylist].filter(p => p !== undefined);
-  const trendingPlaylists = [top40Playlist, trendingRockPlaylist, trendingHipHopPlaylist].filter(pl => pl !== undefined);
+  const sections = [
+    { title: 'Featured', playlist: featuredPlaylist },
+    { title: 'Top 40', playlist: top40Playlist },
+    { title: 'Rock', playlist: trendingRockPlaylist },
+    { title: 'Hip Hop', playlist: trendingHipHopPlaylist },
+  ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Music for Your Run</h1>
-      <PlaylistSection title="Featured" playlists={featuredPlaylists} />
-      <PlaylistSection title="Trending" playlists={trendingPlaylists} />
+    <div className="min-h-screen bg-black text-white">
+      <div className="text-center py-4 border-b border-gray-800">
+        <h1 className="text-2xl font-bold">NOSTR RUN CLUB</h1>
+      </div>
+      
+      <div className="p-4">
+        <div className="flex gap-4 justify-center flex-wrap">
+          {sections.map(({ title, playlist }) => (
+            playlist && (
+              <PlaylistSection
+                key={title}
+                title={title}
+                playlists={[playlist]}
+              />
+            )
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
