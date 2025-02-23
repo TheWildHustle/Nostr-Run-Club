@@ -5,7 +5,7 @@ export function PlaylistGrid({ playlist }) {
 
   return (
     <div className="flex items-center text-white border border-pink-300 rounded-lg overflow-hidden">
-      <div className="flex flex-wrap w-[100px] h-[100px] min-w-[100px]">
+      <div className="flex flex-wrap w-[33px] h-[33px] min-w-[33px]">
         {tracks.slice(0, 4).map((track) => (
           <img
             key={track.id}

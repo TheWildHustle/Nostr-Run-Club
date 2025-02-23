@@ -26,7 +26,7 @@ export function TrackList({ tracks = [] }) {
               <img
                 src={track.artwork || '/default-album-art.png'}
                 alt={`${track.title} artwork`}
-                className="w-12 h-12 rounded"
+                className="w-4 h-4 rounded"
               />
               <div>
                 <h3 className="font-medium text-white">{track.title}</h3>

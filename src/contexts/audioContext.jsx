@@ -11,17 +11,6 @@ export function AudioProvider({ children }) {
   const [queue, setQueue] = useState([]);
   const soundRef = useRef(null);
 
-  const playNext = useCallback(() => {
-    if (queue.length > 0) {
-      const nextTrack = queue[0];
-      setQueue(prevQueue => prevQueue.slice(1));
-      play(nextTrack);
-    } else {
-      setCurrentTrack(null);
-      setIsPlaying(false);
-    }
-  }, [queue]);
-
   const play = useCallback(async (track) => {
     if (soundRef.current) {
       soundRef.current.unload();
@@ -30,26 +19,48 @@ export function AudioProvider({ children }) {
     if (track) {
       try {
         soundRef.current = new Howl({
-          src: [track.streamUrl],
+          src: [track.streamUrl || track.mediaUrl],
           html5: true,
           volume: volume,
           onend: () => {
-            playNext();
+            if (queue.length > 0) {
+              const nextTrack = queue[0];
+              setQueue(prevQueue => prevQueue.slice(1));
+              play(nextTrack);
+            } else {
+              setCurrentTrack(null);
+              setIsPlaying(false);
+            }
           },
+          onplay: () => {
+            setIsPlaying(true);
+          },
+          onpause: () => {
+            setIsPlaying(false);
+          },
+          onstop: () => {
+            setIsPlaying(false);
+          },
+          onloaderror: (id, error) => {
+            console.error('Error loading audio:', error);
+            setIsPlaying(false);
+          },
+          onplayerror: (id, error) => {
+            console.error('Error playing audio:', error);
+            setIsPlaying(false);
+          }
         });
         setCurrentTrack(track);
         soundRef.current.play();
-        setIsPlaying(true);
       } catch (error) {
-        console.error('Error playing track:', error);
+        console.error('Error setting up audio:', error);
       }
     }
-  }, [volume, playNext]);
+  }, [volume, queue]);
 
   const pause = useCallback(() => {
     if (soundRef.current) {
       soundRef.current.pause();
-      setIsPlaying(false);
     }
   }, []);
 
@@ -59,9 +70,23 @@ export function AudioProvider({ children }) {
       pause();
     } else {
       soundRef.current.play();
-      setIsPlaying(true);
     }
   }, [isPlaying, pause]);
+
+  const playNext = useCallback(() => {
+    if (queue.length > 0) {
+      const nextTrack = queue[0];
+      setQueue(prevQueue => prevQueue.slice(1));
+      play(nextTrack);
+    }
+  }, [queue, play]);
+
+  const playPrevious = useCallback(() => {
+    // For now, just restart the current track
+    if (soundRef.current) {
+      soundRef.current.seek(0);
+    }
+  }, []);
 
   const setPlayerVolume = useCallback((newVolume) => {
     setVolume(newVolume);
@@ -71,7 +96,7 @@ export function AudioProvider({ children }) {
   }, []);
 
   const addToQueue = useCallback((tracks) => {
-    setQueue(prevQueue => [...prevQueue, ...tracks]);
+    setQueue(prevQueue => [...prevQueue, ...(Array.isArray(tracks) ? tracks : [tracks])]);
   }, []);
 
   const value = {
@@ -82,9 +107,10 @@ export function AudioProvider({ children }) {
     play,
     pause,
     togglePlay,
-    setVolume: setPlayerVolume,
-    addToQueue,
     playNext,
+    playPrevious,
+    setVolume: setPlayerVolume,
+    addToQueue
   };
 
   return (

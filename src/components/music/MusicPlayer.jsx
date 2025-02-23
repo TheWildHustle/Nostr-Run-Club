@@ -1,131 +1,108 @@
-import { useAudioPlayer } from '../../hooks/useAudioPlayer.jsx';
-import { useWavlake } from '../../hooks/useWavlake.jsx';
+import { useContext } from 'react';
+import { AudioContext } from '../../contexts/audioContext';
+import 'react-h5-audio-player/lib/styles.css';
 
 export function MusicPlayer() {
   const { 
-    currentTrack, 
     isPlaying, 
     volume,
-    queue,
     togglePlay,
     setVolume,
-    playNext
-  } = useAudioPlayer();
+    playNext,
+    playPrevious
+  } = useContext(AudioContext);
+  const currentTime = 0;
+  const duration = 205; // Example duration in seconds
 
-  const {
-    isLoading,
-    error
-  } = useWavlake();
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
-    <div className="music-player bg-gray-900 text-white p-4 rounded-lg shadow-lg">
-      {/* Now Playing Section */}
-      <div className="now-playing mb-4">
-        {currentTrack ? (
-          <div className="flex items-center space-x-4">
-            <img 
-              src={currentTrack.artwork || '/default-album-art.png'} 
-              alt="Album Art"
-              className="w-16 h-16 rounded-md"
+    <div className="music-player bg-black text-white p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Progress Bar */}
+        <div className="flex items-center space-x-3 mb-6">
+          <span className="text-sm text-gray-400">{formatTime(currentTime)}</span>
+          <div className="flex-1 h-2 bg-gray-800 rounded-full cursor-pointer">
+            <div 
+              className="h-full bg-white rounded-full" 
+              style={{ width: `${(currentTime / duration) * 100}%` }}
             />
-            <div>
-              <h3 className="font-bold">{currentTrack.title}</h3>
-              <p className="text-gray-400">{currentTrack.artist}</p>
-            </div>
           </div>
-        ) : (
-          <p className="text-gray-400">No track playing</p>
-        )}
-      </div>
+          <span className="text-sm text-gray-400">{formatTime(duration)}</span>
+        </div>
 
-      {/* Controls Section */}
-      <div className="controls flex items-center justify-center space-x-4 mb-4">
-        <button
-          onClick={() => playNext()}
-          className="p-2 hover:bg-gray-700 rounded-full"
-          disabled={!queue.length}
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-          </svg>
-        </button>
-
-        <button
-          onClick={togglePlay}
-          className="p-3 bg-green-500 hover:bg-green-600 rounded-full"
-        >
-          {isPlaying ? (
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+        <div className="flex items-center justify-center space-x-16">
+          {/* Shuffle Button */}
+          <button className="text-gray-400 hover:text-white p-4">
+            <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 4l3 3-3 3M18 20l3-3-3-3M3 12h18M3 7h12M3 17h12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          ) : (
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+          </button>
+
+          {/* Previous Button */}
+          <button
+            onClick={playPrevious}
+            className="text-gray-400 hover:text-white p-4 transition-transform duration-200 hover:scale-110"
+          >
+            <svg className="w-20 h-20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z"/>
             </svg>
-          )}
-        </button>
+          </button>
 
-        <button
-          onClick={() => playNext()}
-          className="p-2 hover:bg-gray-700 rounded-full"
-          disabled={!queue.length}
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Volume Control */}
-      <div className="volume-control flex items-center space-x-2">
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
-        </svg>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
-          className="w-full"
-        />
-      </div>
-
-      {/* Queue Section */}
-      {queue.length > 0 && (
-        <div className="queue mt-4">
-          <h4 className="text-sm font-bold mb-2">Next in queue</h4>
-          <div className="space-y-2">
-            {queue.slice(0, 3).map((track, index) => (
-              <div key={track.id} className="flex items-center space-x-2 text-sm">
-                <span className="text-gray-400">{index + 1}</span>
-                <span className="truncate">{track.title}</span>
-                <span className="text-gray-400">- {track.artist}</span>
-              </div>
-            ))}
-            {queue.length > 3 && (
-              <p className="text-gray-400 text-sm">
-                +{queue.length - 3} more tracks
-              </p>
+          {/* Play/Pause Button */}
+          <button
+            onClick={togglePlay}
+            className="text-white hover:text-gray-200 p-8 bg-white bg-opacity-10 rounded-full hover:bg-opacity-20 transition-all duration-200 hover:scale-110"
+          >
+            {isPlaying ? (
+              <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            ) : (
+              <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
             )}
+          </button>
+
+          {/* Next Button */}
+          <button
+            onClick={playNext}
+            className="text-gray-400 hover:text-white p-4 transition-transform duration-200 hover:scale-110"
+          >
+            <svg className="w-20 h-20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+            </svg>
+          </button>
+
+          {/* Repeat Button */}
+          <button className="text-gray-400 hover:text-white p-4">
+            <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M17 1l4 4-4 4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M3 11V9a4 4 0 014-4h14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M7 23l-4-4 4-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 13v2a4 4 0 01-4 4H3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {/* Volume Control */}
+          <div className="flex items-center space-x-2">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volume}
+              onChange={(e) => setVolume(parseFloat(e.target.value))}
+              className="w-32 h-2 bg-gray-600 rounded-full appearance-none cursor-pointer hover:bg-gray-500"
+            />
           </div>
         </div>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div className="error-message mt-4 text-red-500 text-sm">
-          {error}
-        </div>
-      )}
-
-      {/* Loading Indicator */}
-      {isLoading && (
-        <div className="loading mt-4 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500 mx-auto"></div>
-        </div>
-      )}
+      </div>
     </div>
   );
-} 
+}
