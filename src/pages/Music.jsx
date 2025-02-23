@@ -1,16 +1,40 @@
+import { PlaylistSection } from '../components/Music/PlaylistSection';
+import { useQuery } from '@tanstack/react-query';
+import { fetchFeaturedPlaylist, fetchTop40, fetchTrendingRock, fetchTrendingHipHop } from '../services/wavlake';
+
 export function Music() {
+  const { data: featuredPlaylist } = useQuery({
+    queryKey: ['playlist', 'featured'],
+    queryFn: fetchFeaturedPlaylist,
+    staleTime: Infinity,
+  });
+
+  const { data: top40Playlist } = useQuery({
+    queryKey: ['playlist', 'top40'],
+    queryFn: fetchTop40,
+    staleTime: Infinity,
+  });
+
+  const { data: trendingRockPlaylist } = useQuery({
+    queryKey: ['playlist', 'trending-rock'],
+    queryFn: fetchTrendingRock,
+    staleTime: Infinity,
+  });
+
+  const { data: trendingHipHopPlaylist } = useQuery({
+    queryKey: ['playlist', 'trending-hiphop'],
+    queryFn: fetchTrendingHipHop,
+    staleTime: Infinity,
+  });
+
+  const featuredPlaylists = [featuredPlaylist].filter(p => p !== undefined);
+  const trendingPlaylists = [top40Playlist, trendingRockPlaylist, trendingHipHopPlaylist].filter(pl => pl !== undefined);
+
   return (
-    <div className="container text-center py-12">
-      <h1 className="text-2xl font-bold mb-4">Music</h1>
-      <div className="bg-gray-100 rounded-lg p-8 max-w-md mx-auto">
-        <h2 className="text-xl font-semibold mb-2">
-          Wavlake Integration Coming Soon!
-        </h2>
-        <p className="text-gray-600">
-          We&apos;re working on integrating Wavlake to provide you with the
-          perfect running soundtrack. Stay tuned for updates!
-        </p>
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Music for Your Run</h1>
+      <PlaylistSection title="Featured" playlists={featuredPlaylists} />
+      <PlaylistSection title="Trending" playlists={trendingPlaylists} />
     </div>
   );
 }

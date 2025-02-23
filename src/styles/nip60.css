@@ -1,0 +1,44 @@
+.nip60-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.nip60-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.nip60-description {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.nip60-features {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  list-style-type: none;
+}
+
+.nip60-features li {
+  margin: 10px 0;
+  padding-left: 25px;
+  position: relative;
+  color: #fff;
+}
+
+.nip60-features li:before {
+  content: "⚡";
+  position: absolute;
+  left: 0;
+}
+
+.nip60-wallet {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+} 
