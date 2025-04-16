@@ -65,6 +65,9 @@ git clone https://github.com/TheWildHustle/Nostr-Run-Club.git
 # Install dependencies
 npm install
 
+# Run build command
+npm run build
+
 # Build the react app
 npm run dev
 
